@@ -130,7 +130,7 @@ if st.session_state["loggedin"]:
             scores_file = f"{username}_{model}_scores.csv"
             filepath = os.path.join(h_evals_dir, scores_file)
             if os.path.exists(filepath):
-                scores_df_existing = pd.read_csv(scores_file)
+                scores_df_existing = pd.read_csv(filepath)
                 scores_df_existing = scores_df_existing[
                     scores_df_existing.Title != input_df.iloc[entry_index]["Title"]
                 ]
