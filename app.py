@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
-
+#st.title("Revolutionize AI Assessments: An Intuitive Web Tool for Evaluating LLM Paraphrase Performance ")
 # Define the models and corresponding csv files
 models = {
     "gemini 1.5 pro": "gemini_15_pro.csv",
@@ -42,6 +42,12 @@ def check_login(username, password):
 # Login form displayed only if not logged in
 st.set_page_config(layout="wide")
 
+st.markdown(
+    "<h1 style='text-align: center;'>An Intuitive Web Tool for Evaluating LLM Paraphrase Performance</h1>",
+    unsafe_allow_html=True,
+)
+#st.title("An Intuitive Web Tool for Evaluating LLM Paraphrase Performance")
+
 if not st.session_state["loggedin"]:
     st.subheader("Login")
     username = st.text_input("Username")
@@ -69,6 +75,8 @@ if st.session_state["loggedin"]:
     input_df = pd.read_csv("input.csv")
 
     # Create the sidebar
+    st.sidebar.title("Revolutionize AI Assessments")
+    #st.sidebar.header("Web-Interface For LLM Evaluation")
     st.sidebar.title("Menu")
     menu = st.sidebar.radio(
         "", ("Human Evaluation", "Automatic Evaluation", "Models", "Evaluation Metrics")
