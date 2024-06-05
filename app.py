@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import os
+import base64
 
-#st.title("Revolutionize AI Assessments: An Intuitive Web Tool for Evaluating LLM Paraphrase Performance ")
+# st.title("Revolutionize AI Assessments: An Intuitive Web Tool for Evaluating LLM Paraphrase Performance ")
 # Define the models and corresponding csv files
 models = {
     "gemini 1.5 pro": "gemini_15_pro.csv",
@@ -42,14 +43,28 @@ def check_login(username, password):
 # Login form displayed only if not logged in
 st.set_page_config(layout="wide")
 
-st.markdown(
-    "<h1 style='text-align: center;'>An Intuitive Web Tool for Evaluating LLM Paraphrase Performance</h1>",
-    unsafe_allow_html=True,
-)
-#st.title("An Intuitive Web Tool for Evaluating LLM Paraphrase Performance")
+# Define the headings for each menu
+headings = {
+    "Human Evaluation": "An Intuitive Web Tool for Evaluating LLM Paraphrase Performance",
+    "Automatic Evaluation Metrics": "Automatic Evaluation Metrics Deployed in this Study",
+    "Language Models": "Overview of LLM Studied",
+    "Results and Findings": "Comparative Analysis of The Paraphrasing Performance of the LLMs",
+}
+
+# st.markdown(
+#     "<h1 style='text-align: center;'>An Intuitive Web Tool for Evaluating LLM Paraphrase Performance</h1>",
+#     unsafe_allow_html=True,
+# )
+# st.title("An Intuitive Web Tool for Evaluating LLM Paraphrase Performance")
 
 if not st.session_state["loggedin"]:
     st.subheader("Login")
+
+    # Display test username and password
+    st.info(
+        "For testing purposes, use the following credentials:\n\n**Username:** test\n\n**Password:** 123"
+    )
+
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
@@ -64,7 +79,7 @@ if not st.session_state["loggedin"]:
 if st.session_state["loggedin"]:
     username = st.session_state["username"]
     # Main application content displayed only if logged in
-    st.subheader(f"Welcome back, {username}")
+    # st.subheader(f"Welcome back, {username}")
     # Refresh button
     col1, col2, col3, col4 = st.columns([15, 15, 15, 6])
     with col4:
@@ -76,10 +91,22 @@ if st.session_state["loggedin"]:
 
     # Create the sidebar
     st.sidebar.title("Revolutionize AI Assessments")
-    #st.sidebar.header("Web-Interface For LLM Evaluation")
+    # st.sidebar.header("Web-Interface For LLM Evaluation")
     st.sidebar.title("Menu")
     menu = st.sidebar.radio(
-        "", ("Human Evaluation", "Automatic Evaluation", "Models", "Evaluation Metrics")
+        "",
+        (
+            "Human Evaluation",
+            "Automatic Evaluation Metrics",
+            "Language Models",
+            "Results and Findings",
+        ),
+    )
+
+    # Display the appropriate heading based on the selected menu
+    st.markdown(
+        f"<h1 style='text-align: center;'>{headings[menu]}</h1>",
+        unsafe_allow_html=True,
     )
 
     if menu == "Human Evaluation":
@@ -194,17 +221,50 @@ if st.session_state["loggedin"]:
                 scores_df.to_csv(filepath, index=False)
                 st.write("Scores saved successfully!")
 
-    elif menu == "Automatic Evaluation":
-        st.write("You selected Automatic Evaluation")
+    elif menu == "Automatic Evaluation Metrics":
+        # st.write("You selected 'Automatic Evaluation Metrics'")
 
-    elif menu == "Models":
-        st.write("You selected Models")
+        # st.write("You selected 'Automatic Evaluation Metrics'")
+        images_dir = "metrics_images"
+        if os.path.exists(images_dir):
+            for image_file in os.listdir(images_dir):
+                image_path = os.path.join(images_dir, image_file)
+                with open(image_path, "rb") as img_file:
+                    img_bytes = img_file.read()
+                    img_base64 = base64.b64encode(img_bytes).decode()
+                    st.markdown(
+                        f"<div style='display: flex; justify-content: center;'><img src='data:image/png;base64,{img_base64}' style='padding: 10px; border-radius: 10px; max-width: 100%; height: auto;'></div>",
+                        unsafe_allow_html=True,
+                    )
+        else:
+            st.error("Images folder not found")
 
-    elif menu == "Evaluation Metrics":
-        st.write("You selected Evaluation Metrics")
+    elif menu == "Language Models":
+        # st.write("You selected 'Language Models'")
+        images_dir = "models_images"
+        if os.path.exists(images_dir):
+            for image_file in os.listdir(images_dir):
+                image_path = os.path.join(images_dir, image_file)
+                st.image(image_path, caption="")
+        else:
+            st.error("Images folder not found")
+    elif menu == "Results and Findings":
+        # st.write("You selected 'Results and Findings'")
+        # Display images from the 'images' folder
+        images_dir = "results_images"
+        if os.path.exists(images_dir):
+            for image_file in os.listdir(images_dir):
+                image_path = os.path.join(images_dir, image_file)
+                st.image(image_path, caption="")
+        else:
+            st.error("Images folder not found")
 
     # Logout button in the top right corner
     if st.sidebar.button("Logout"):
         st.session_state["loggedin"] = False
         st.session_state["username"] = ""
         st.experimental_rerun()
+
+
+# BERTScore, BLEU, ROUGE, METEOR, Google-BLEU (GLEU) and
+# T5-STSB
