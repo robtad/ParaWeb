@@ -40,6 +40,32 @@ def check_login(username, password):
     return False
 
 
+# Function to display images in a directory
+def display_images(images_dir):
+    if os.path.exists(images_dir):
+        for image_file in os.listdir(images_dir):
+            image_path = os.path.join(images_dir, image_file)
+            st.image(image_path, caption="")
+    else:
+        st.error("Images folder not found")
+
+
+# Function to display CSV files in a directory
+def display_csv_files(csv_dir):
+    if os.path.exists(csv_dir):
+        csv_files = [f for f in os.listdir(csv_dir) if f.endswith(".csv")]
+        if csv_files:
+            selected_csv = st.selectbox("Select a CSV file", csv_files)
+            if selected_csv:
+                csv_path = os.path.join(csv_dir, selected_csv)
+                df = pd.read_csv(csv_path)
+                st.dataframe(df)
+        else:
+            st.error("No CSV files found in the directory")
+    else:
+        st.error("CSV folder not found")
+
+
 # Login form displayed only if not logged in
 st.set_page_config(layout="wide")
 
@@ -49,6 +75,7 @@ headings = {
     "Automatic Evaluation Metrics": "Automatic Evaluation Metrics Deployed in this Study",
     "Language Models": "Overview of LLM Studied",
     "Results and Findings": "Comparative Analysis of The Paraphrasing Performance of the LLMs",
+    "Contact Us": "",
 }
 
 # st.markdown(
@@ -100,6 +127,7 @@ if st.session_state["loggedin"]:
             "Automatic Evaluation Metrics",
             "Language Models",
             "Results and Findings",
+            "Contact Us",
         ),
     )
 
@@ -248,10 +276,38 @@ if st.session_state["loggedin"]:
                 st.image(image_path, caption="")
         else:
             st.error("Images folder not found")
+    # elif menu == "Results and Findings":
+    #     # st.write("You selected 'Results and Findings'")
+    #     # Display images from the 'images' folder
+    #     images_dir = "results_images"
+    #     if os.path.exists(images_dir):
+    #         for image_file in os.listdir(images_dir):
+    #             image_path = os.path.join(images_dir, image_file)
+    #             st.image(image_path, caption="")
+    #     else:
+    #         st.error("Images folder not found")
     elif menu == "Results and Findings":
+        sub_menu = st.sidebar.selectbox(
+            "Select Results Type",
+            ["Abstract Paraphrase Results", "Sentence Paraphrase Results"],
+        )
+
+        if sub_menu == "Abstract Paraphrase Results":
+            st.markdown(
+                "<h1 style='text-align: center;'>Abstract Paraphrase Results</h1>",
+                unsafe_allow_html=True,
+            )
+            display_csv_files("abstract_para")
+        elif sub_menu == "Sentence Paraphrase Results":
+            st.markdown(
+                "<h1 style='text-align: center;'>Sentence Paraphrase Results</h1>",
+                unsafe_allow_html=True,
+            )
+            display_images("results_images")
+    elif menu == "Contact Us":
         # st.write("You selected 'Results and Findings'")
         # Display images from the 'images' folder
-        images_dir = "results_images"
+        images_dir = "about_us"
         if os.path.exists(images_dir):
             for image_file in os.listdir(images_dir):
                 image_path = os.path.join(images_dir, image_file)
